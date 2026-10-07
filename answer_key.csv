@@ -1,0 +1,21 @@
+file,supplier,invoice_number,invoice_date,due_date,currency,subtotal,vat,total,flags,layout,language
+invoice_01.pdf,Cupworks Packaging,2026/769,2026-09-01,2026-09-15,GBP,181.00,36.20,217.20,none,modern,en
+invoice_02.pdf,Leinster Dairy Co-op,LD-8217,2026-09-02,2026-10-02,EUR,196.05,0.00,196.05,none,compact,en
+invoice_03.pdf,Cupworks Packaging,CP-2363,2026-09-05,2026-09-19,GBP,370.00,74.00,444.00,none,classic,en
+invoice_04.pdf,Bean & Leaf Importers Ltd,BL-5766,2026-09-05,2026-10-20,EUR,92.00,21.16,113.16,none,compact,en
+invoice_05.pdf,Kaffeerösterei Schmidt GmbH,2026/174,2026-09-07,2026-09-21,EUR,549.00,0.00,549.00,none,classic,de
+invoice_06.pdf,Brew Tech Inc,BT-3205,2026-09-08,2026-10-08,USD,2720.00,0.00,2720.00,none,modern,en
+invoice_07.pdf,Bean & Leaf Importers Ltd,BL-9337,2026-09-11,2026-10-11,EUR,762.00,175.26,937.26,none,classic,en
+invoice_08.pdf,Eireann Espresso Services,2026/503,2026-09-11,2026-10-26,EUR,290.00,66.70,356.70,none,classic,en
+invoice_09.pdf,Cupworks Packaging,CP-6389,2026-09-13,2026-10-13,GBP,370.00,74.00,444.00,none,compact,en
+invoice_10.pdf,Bean & Leaf Importers Ltd,INV26089,2026-09-14,2026-10-14,EUR,14526.50,3341.10,17867.60,high_amount,compact,en
+invoice_11.pdf,Bean & Leaf Importers Ltd,BL-7360,2026-09-17,2026-10-01,EUR,92.00,21.16,113.16,none,classic,en
+invoice_12.pdf,Leinster Dairy Co-op,2026/530,2026-09-18,2026-10-18,EUR,127.30,0.00,127.30,none,modern,en
+invoice_13.pdf,Eireann Espresso Services,EE-2214,2026-09-19,2026-11-03,EUR,356.00,81.88,437.88,none,classic,en
+invoice_14.pdf,Kaffeerösterei Schmidt GmbH,INV22887,2026-09-20,2026-11-04,EUR,194.00,0.00,194.00,none,compact,de
+invoice_15.pdf,Eireann Espresso Services,2026/243,2026-09-22,2026-10-22,EUR,267.00,61.41,328.41,none,classic,en
+invoice_16.pdf,Brew Tech Inc,2026/168,2026-09-24,2026-10-08,USD,21020.00,0.00,21020.00,high_amount,modern,en
+invoice_17.pdf,Fresh Bakes Wholesale,INV21391,2026-09-25,2026-11-09,EUR,226.50,30.58,257.08,new_supplier,compact,en
+invoice_18.pdf,QuickClean Supplies,QS-1203,2026-09-26,2026-10-26,EUR,72.00,16.56,88.56,new_supplier,compact,en
+invoice_19.pdf,Kaffeerösterei Schmidt GmbH,2026/573,2026-09-28,2026-10-12,EUR,485.00,0.00,485.00,none,classic,de
+invoice_20.pdf,Kaffeerösterei Schmidt GmbH,2026/174,2026-09-07,2026-09-21,EUR,549.00,0.00,549.00,duplicate,compact,de
