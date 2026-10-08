@@ -1,1 +1,811 @@
-[{"updatedAt":"2026-10-07T20:10:24.278Z","createdAt":"2026-10-07T19:32:20.103Z","id":"h2fX6oldWlyyWXXc","name":"Invoice Intake","description":null,"active":false,"isArchived":false,"nodes":[{"parameters":{"downloadAttachments":true,"options":{}},"type":"n8n-nodes-base.emailReadImap","typeVersion":2.2,"position":[0,0],"id":"13d12cfd-383f-4759-8e3d-8b57af21d910","name":"Email Trigger (IMAP)","credentials":{"imap":{"id":"l13ISX3G5YbQQ8TD","name":"IMAP account"}}},{"parameters":{"operation":"pdf","binaryPropertyName":"attachment_0","options":{}},"type":"n8n-nodes-base.extractFromFile","typeVersion":1.1,"position":[224,0],"id":"84610b73-78f1-4e7e-a3a6-2c9622e4d9ee","name":"Extract from File"},{"parameters":{"text":"={{ $json.text }}","schemaType":"manual","inputSchema":"{\n  \"type\": \"object\",\n  \"properties\": {\n    \"supplier\": { \"type\": \"string\", \"description\": \"Company that issued the invoice (NOT the customer, Kildare Craft Coffee Ltd)\" },\n    \"invoice_number\": { \"type\": \"string\", \"description\": \"Invoice number exactly as printed\" },\n    \"invoice_date\": { \"type\": \"string\", \"description\": \"Issue date as YYYY-MM-DD\" },\n    \"due_date\": { \"type\": \"string\", \"description\": \"Payment due date as YYYY-MM-DD\" },\n    \"currency\": { \"type\": \"string\", \"description\": \"3-letter currency code, e.g. EUR, GBP, USD\" },\n    \"subtotal\": { \"type\": \"number\", \"description\": \"Amount before VAT\" },\n    \"vat\": { \"type\": \"number\", \"description\": \"VAT amount; 0 if none is shown\" },\n    \"total\": { \"type\": \"number\", \"description\": \"Final amount due, including VAT\" }\n  },\n  \"required\": [\"supplier\", \"invoice_number\", \"invoice_date\", \"due_date\", \"currency\", \"subtotal\", \"vat\", \"total\"]\n}","options":{}},"type":"@n8n/n8n-nodes-langchain.informationExtractor","typeVersion":1.2,"position":[448,0],"id":"47051885-1fbd-407f-941c-c4ce0027115e","name":"Information Extractor"},{"parameters":{"model":{"__rl":true,"value":"claude-opus-5-5","mode":"list","cachedResultName":"Claude Opus 5.5"},"options":{}},"type":"@n8n/n8n-nodes-langchain.lmChatAnthropic","typeVersion":1.6,"position":[384,208],"id":"a0f8f573-3d1e-45f8-8176-c757a9bfd2bf","name":"Anthropic Chat Model","credentials":{"anthropicApi":{"id":"CCAR2Rh4JCe5AwCu","name":"Anthropic account"}}}],"connections":{"Email Trigger (IMAP)":{"main":[[{"node":"Extract from File","type":"main","index":0}]]},"Extract from File":{"main":[[{"node":"Information Extractor","type":"main","index":0}]]},"Anthropic Chat Model":{"ai_languageModel":[[{"node":"Information Extractor","type":"ai_languageModel","index":0}]]}},"settings":{"executionOrder":"v1","binaryMode":"separate"},"staticData":null,"meta":{"templateCredsSetupCompleted":true},"nodeGroups":[],"pinData":{"Extract from File":[{"json":{"numpages":1,"numrender":1,"info":{"PDFFormatVersion":"1.4","Language":null,"EncryptFilterName":null,"IsLinearized":false,"IsAcroFormPresent":false,"IsXFAPresent":false,"IsCollectionPresent":false,"IsSignaturesPresent":false,"Author":"anonymous","CreationDate":"D:20261007202339+01'00'","Creator":"anonymous","Keywords":"","ModDate":"D:20261007202339+01'00'","Producer":"ReportLab PDF Library - (opensource)","Subject":"unspecified","Title":"Rechnung 2026/174","Trapped":{"name":"False"}},"text":"Kaffeerösterei Schmidt GmbH\nHafenstraße 21, 20457 Hamburg, Deutschland\nRechnung\nRechnungsnummer: 2026/174\nDatum: September 07, 2026\nFällig am: September 21, 2026\nRechnungsempfänger\nKildare Craft Coffee Ltd\nUnit 4, Main Street\nKilcock, Co. Kildare, W23 X2K7\nIreland\nBeschreibung Menge Einzelpreis Betrag\nEspresso Blend Nr. 3, 5 kg 3 €97.00 €291.00\nRöstkaffee Hausmischung, 5 kg 3 €86.00 €258.00\nZwischensumme €549.00\nGesamtbetrag €549.00","version":"5.4.296"},"binary":{},"pairedItem":{"item":0}},{"json":{"numpages":1,"numrender":1,"info":{"PDFFormatVersion":"1.4","Language":null,"EncryptFilterName":null,"IsLinearized":false,"IsAcroFormPresent":false,"IsXFAPresent":false,"IsCollectionPresent":false,"IsSignaturesPresent":false,"Author":"anonymous","CreationDate":"D:20261007202339+01'00'","Creator":"anonymous","Keywords":"","ModDate":"D:20261007202339+01'00'","Producer":"ReportLab PDF Library - (opensource)","Subject":"unspecified","Title":"Rechnung 2026/174","Trapped":{"name":"False"}},"text":"Kaffeerösterei Schmidt GmbH\nHafenstraße 21, 20457 Hamburg, Deutschland\nRechnung\nRechnungsnummer: 2026/174\nDatum: September 07, 2026\nFällig am: September 21, 2026\nRechnungsempfänger\nKildare Craft Coffee Ltd\nUnit 4, Main Street\nKilcock, Co. Kildare, W23 X2K7\nIreland\nBeschreibung Menge Einzelpreis Betrag\nEspresso Blend Nr. 3, 5 kg 3 €97.00 €291.00\nRöstkaffee Hausmischung, 5 kg 3 €86.00 €258.00\nZwischensumme €549.00\nGesamtbetrag €549.00","version":"5.4.296"},"binary":{},"pairedItem":{"item":1}}]},"versionId":"16b2d2a0-e080-4f42-b7d9-4be41a925e05","activeVersionId":null,"versionCounter":16,"triggerCount":0,"sourceWorkflowId":null,"tags":[],"shared":[{"updatedAt":"2026-10-07T19:32:20.105Z","createdAt":"2026-10-07T19:32:20.105Z","role":"workflow:owner","workflowId":"h2fX6oldWlyyWXXc","projectId":"FGSoFnjmSFjub7mk","project":{"updatedAt":"2026-10-07T19:25:09.766Z","createdAt":"2026-10-07T19:22:05.950Z","id":"FGSoFnjmSFjub7mk","name":"Alexandru Varzari <varzaria53@gmail.com>","type":"personal","icon":null,"description":null,"customTelemetryTags":[],"creatorId":"d7d3758f-59ac-4d0f-ad5e-e1dcb10652a4"}}],"versionMetadata":{"name":null,"description":null}}]
+[
+  {
+    "updatedAt": "2026-10-08T12:07:04.898Z",
+    "createdAt": "2026-10-07T19:32:20.103Z",
+    "id": "h2fX6oldWlyyWXXc",
+    "name": "Invoice Intake",
+    "description": null,
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "downloadAttachments": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.emailReadImap",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "13d12cfd-383f-4759-8e3d-8b57af21d910",
+        "name": "Email Trigger (IMAP)",
+        "credentials": {
+          "imap": {
+            "id": "l13ISX3G5YbQQ8TD",
+            "name": "IMAP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "binaryPropertyName": "attachment_0",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          224,
+          0
+        ],
+        "id": "84610b73-78f1-4e7e-a3a6-2c9622e4d9ee",
+        "name": "Extract from File"
+      },
+      {
+        "parameters": {
+          "text": "={{ $json.text }}",
+          "schemaType": "manual",
+          "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"supplier\": { \"type\": \"string\", \"description\": \"Company that issued the invoice (NOT the customer, Kildare Craft Coffee Ltd)\" },\n    \"invoice_number\": { \"type\": \"string\", \"description\": \"Invoice number exactly as printed\" },\n    \"invoice_date\": { \"type\": \"string\", \"description\": \"Issue date as YYYY-MM-DD\" },\n    \"due_date\": { \"type\": \"string\", \"description\": \"Payment due date as YYYY-MM-DD\" },\n    \"currency\": { \"type\": \"string\", \"description\": \"3-letter currency code, e.g. EUR, GBP, USD\" },\n    \"subtotal\": { \"type\": \"number\", \"description\": \"Amount before VAT\" },\n    \"vat\": { \"type\": \"number\", \"description\": \"VAT amount; 0 if none is shown\" },\n    \"total\": { \"type\": \"number\", \"description\": \"Final amount due, including VAT\" }\n  },\n  \"required\": [\"supplier\", \"invoice_number\", \"invoice_date\", \"due_date\", \"currency\", \"subtotal\", \"vat\", \"total\"]\n}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+        "typeVersion": 1.2,
+        "position": [
+          448,
+          0
+        ],
+        "id": "47051885-1fbd-407f-941c-c4ce0027115e",
+        "name": "Information Extractor"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "claude-opus-5-5",
+            "mode": "list",
+            "cachedResultName": "Claude Opus 5.5"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+        "typeVersion": 1.6,
+        "position": [
+          384,
+          208
+        ],
+        "id": "a0f8f573-3d1e-45f8-8176-c757a9bfd2bf",
+        "name": "Anthropic Chat Model",
+        "credentials": {
+          "anthropicApi": {
+            "id": "CCAR2Rh4JCe5AwCu",
+            "name": "Anthropic account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50",
+            "mode": "list",
+            "cachedResultName": "Kildare Craft Coffee – Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1527255201,
+            "mode": "list",
+            "cachedResultName": "Suppliers",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit#gid=1527255201"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          816,
+          0
+        ],
+        "id": "3b475e59-db3a-4438-b6c9-5f7225eee803",
+        "name": "Get approved suppliers",
+        "executeOnce": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "nWtlGs5taM8YbCf8",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          -160
+        ],
+        "id": "1fd0149f-c71a-4e2e-89ba-d43f181cccc4",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50",
+            "mode": "list",
+            "cachedResultName": "Kildare Craft Coffee – Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1040,
+          0
+        ],
+        "id": "8b4250b8-a162-4104-88de-571b6f2368ea",
+        "name": "Get logged invoices",
+        "executeOnce": true,
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "nWtlGs5taM8YbCf8",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Flags an invoice if it is a duplicate, from an unapproved supplier, or over 10,000.\nconst clean = s => String(s ?? '').toLowerCase().replace(/[^a-z0-9äöüß]/g, '');\n\n// Edit distance: how many letters differ between two names (catches AI typos like \"Kafferösterei\").\nconst distance = (a, b) => {\n  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);\n  for (let j = 1; j <= b.length; j++) d[0][j] = j;\n  for (let i = 1; i <= a.length; i++)\n    for (let j = 1; j <= b.length; j++)\n      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));\n  return d[a.length][b.length];\n};\n\n// Use the approved supplier's exact name if the extracted name is within 2 letters of it.\nconst approvedNames = $('Get approved suppliers').all().map(i => i.json.supplier);\nconst matchSupplier = name => approvedNames.find(a => distance(clean(a), clean(name)) <= 2);\n\nconst seen = new Set(\n  $('Get logged invoices').all()\n    .filter(i => i.json.invoice_number)\n    .map(i => clean(i.json.supplier) + '|' + clean(i.json.invoice_number))\n);\n\nreturn $('Information Extractor').all().map((item, index) => {\n  const inv = item.json.output;\n  const known = matchSupplier(inv.supplier);\n  const supplier = known ?? inv.supplier;\n  const key = clean(supplier) + '|' + clean(inv.invoice_number);\n\n  const flags = [];\n  if (seen.has(key)) flags.push('duplicate');\n  if (!known) flags.push('new_supplier');\n  if (inv.total > 10000) flags.push('high_amount');\n  seen.add(key); // catches duplicates within the same batch too\n\n  return { json: {\n    received_at: $now.toISO(),\n    ...inv,\n    supplier, // the approved name when matched, so the sheet stays consistent\n    flags: flags.join(';') || 'none',\n    status: flags.length ? 'pending approval' : 'approved',\n    id: `${$execution.id}-${index}`,\n  } };\n});"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1264,
+          0
+        ],
+        "id": "ffd54ea4-1dc9-44e0-8a18-b2ee8f7c5498",
+        "name": "Run checks"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50",
+            "mode": "list",
+            "cachedResultName": "Kildare Craft Coffee – Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "autoMapInputData",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "received_at",
+                "displayName": "received_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "supplier",
+                "displayName": "supplier",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "invoice_number",
+                "displayName": "invoice_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "invoice_date",
+                "displayName": "invoice_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "due_date",
+                "displayName": "due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "currency",
+                "displayName": "currency",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "subtotal",
+                "displayName": "subtotal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "vat",
+                "displayName": "vat",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "total",
+                "displayName": "total",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "flags",
+                "displayName": "flags",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "cellFormat": "RAW"
+          }
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          1488,
+          0
+        ],
+        "id": "b4f5f148-ae5e-4df7-8475-4929fe8d6b14",
+        "name": "Log invoice",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "nWtlGs5taM8YbCf8",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "d2c40ac4-f5ed-4cef-bfe3-169731f905d8",
+                "leftValue": "={{ $json.status }}",
+                "rightValue": "pending approval",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          1712,
+          0
+        ],
+        "id": "75c6f4c9-4498-4535-8eb5-bba7375a40c1",
+        "name": "Needs approval?"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          -96
+        ],
+        "id": "5d4659c5-dbfa-4118-9239-3a3ad4a2f9fd",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {
+          "operation": "sendAndWait",
+          "fromEmail": "demoalex47@gmail.com",
+          "toEmail": "demoalex47@gmail.com",
+          "subject": "=Approval needed: {{ $json.supplier }} invoice {{ $json.invoice_number }}",
+          "message": "=An invoice needs your approval before it is paid.\n\nSupplier: {{ $json.supplier }}\nInvoice number: {{ $json.invoice_number }}\nTotal: {{ $json.total }} {{ $json.currency }}\nDue date: {{ $json.due_date }}\nReason flagged: {{ $json.flags }}",
+          "approvalOptions": {
+            "values": {
+              "approvalType": "double"
+            }
+          },
+          "options": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.emailSend",
+        "typeVersion": 2.1,
+        "position": [
+          2160,
+          112
+        ],
+        "id": "c6db39e9-bf6e-462f-81b0-efdab1bfeb65",
+        "name": "Ask for approval",
+        "webhookId": "4a247d79-00f6-41f3-9cdb-e4f49dcb04e2",
+        "credentials": {
+          "smtp": {
+            "id": "XYlJGK8x4K3pVn9G",
+            "name": "SMTP account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50",
+            "mode": "list",
+            "cachedResultName": "Kildare Craft Coffee – Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "status": "={{ $json.data.approved ? 'approved' : 'rejected' }}",
+              "id": "={{ $('Loop Over Items').item.json.id }}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "received_at",
+                "displayName": "received_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "supplier",
+                "displayName": "supplier",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "invoice_number",
+                "displayName": "invoice_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "invoice_date",
+                "displayName": "invoice_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "due_date",
+                "displayName": "due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "currency",
+                "displayName": "currency",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "subtotal",
+                "displayName": "subtotal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "vat",
+                "displayName": "vat",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "total",
+                "displayName": "total",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "flags",
+                "displayName": "flags",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          2320,
+          112
+        ],
+        "id": "1892de9a-edce-46ce-a274-eef966740246",
+        "name": "Record decision",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "nWtlGs5taM8YbCf8",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "fileSelector": "C:/Users/imdep/.n8n-files/invoices/*.pdf",
+          "options": {
+            "dataPropertyName": "attachment_0"
+          }
+        },
+        "type": "n8n-nodes-base.readWriteFile",
+        "typeVersion": 1.1,
+        "position": [
+          224,
+          -160
+        ],
+        "id": "27f80aac-4669-459e-a4ac-b20f317a1fb2",
+        "name": "Read test invoices"
+      }
+    ],
+    "connections": {
+      "Email Trigger (IMAP)": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Anthropic Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Information Extractor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Information Extractor": {
+        "main": [
+          [
+            {
+              "node": "Get approved suppliers",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "Read test invoices",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get approved suppliers": {
+        "main": [
+          [
+            {
+              "node": "Get logged invoices",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get logged invoices": {
+        "main": [
+          [
+            {
+              "node": "Run checks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Run checks": {
+        "main": [
+          [
+            {
+              "node": "Log invoice",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log invoice": {
+        "main": [
+          [
+            {
+              "node": "Needs approval?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Needs approval?": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [],
+          [
+            {
+              "node": "Ask for approval",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ask for approval": {
+        "main": [
+          [
+            {
+              "node": "Record decision",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Record decision": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read test invoices": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate",
+      "timeSavedMode": "fixed",
+      "timezone": "Europe/Dublin",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "nodeGroups": [],
+    "pinData": {},
+    "versionId": "da211423-3ed1-4c3b-b8a0-d3d66c42e9cf",
+    "activeVersionId": null,
+    "versionCounter": 79,
+    "triggerCount": 0,
+    "sourceWorkflowId": null,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2026-10-07T19:32:20.105Z",
+        "createdAt": "2026-10-07T19:32:20.105Z",
+        "role": "workflow:owner",
+        "workflowId": "h2fX6oldWlyyWXXc",
+        "projectId": "FGSoFnjmSFjub7mk",
+        "project": {
+          "updatedAt": "2026-10-07T19:25:09.766Z",
+          "createdAt": "2026-10-07T19:22:05.950Z",
+          "id": "FGSoFnjmSFjub7mk",
+          "name": "Alexandru Varzari <varzaria53@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "customTelemetryTags": [],
+          "creatorId": "d7d3758f-59ac-4d0f-ad5e-e1dcb10652a4"
+        }
+      }
+    ],
+    "versionMetadata": {
+      "name": null,
+      "description": null
+    }
+  }
+]
