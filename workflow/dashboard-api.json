@@ -1,0 +1,421 @@
+[
+  {
+    "updatedAt": "2026-10-08T15:35:49.468Z",
+    "createdAt": "2026-10-08T15:26:22.428Z",
+    "id": "PnehHrFD7uM4DD5m",
+    "name": "Invoice dashboard API",
+    "description": null,
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "path": "invoices",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "d60cf675-3aa2-4df5-a7f6-ebd7dd71b118",
+        "name": "List invoices",
+        "webhookId": "05b10187-7cc0-439d-a678-fe44063c1481",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "E1pxdlDVEznGfvew",
+            "name": "Header Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50",
+            "mode": "list",
+            "cachedResultName": "Kildare Craft Coffee – Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit#gid=0"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          224,
+          0
+        ],
+        "id": "010b1ba5-537f-4c79-81a5-4cb71b696460",
+        "name": "Get row(s) in sheet",
+        "alwaysOutputData": true,
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "nWtlGs5taM8YbCf8",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "allIncomingItems",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          448,
+          0
+        ],
+        "id": "1c347f07-720a-4c71-a4e7-0302841f0fec",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "decision",
+          "authentication": "headerAuth",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.2,
+        "position": [
+          0,
+          176
+        ],
+        "id": "23959372-6da7-411f-b706-2683e7882b3d",
+        "name": "Record decision",
+        "webhookId": "b7bce902-1597-46ba-acb2-360f3749d450",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "E1pxdlDVEznGfvew",
+            "name": "Header Auth account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50",
+            "mode": "list",
+            "cachedResultName": "Kildare Craft Coffee – Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Invoices",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Q5PyWypS_XjvJ2NjQ4ayqQ_TxGIvHPu-La70qQqOM50/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "id": "={{ $json.body.id }}",
+              "status": "={{ $json.body.decision }}",
+              "decided_at": "={{ $now.toISO() }}",
+              "decided_by": "={{ $json.body.decided_by }}",
+              "note": "={{ $json.body.note }}"
+            },
+            "matchingColumns": [
+              "id"
+            ],
+            "schema": [
+              {
+                "id": "received_at",
+                "displayName": "received_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "supplier",
+                "displayName": "supplier",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "invoice_number",
+                "displayName": "invoice_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "invoice_date",
+                "displayName": "invoice_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "due_date",
+                "displayName": "due_date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "currency",
+                "displayName": "currency",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "subtotal",
+                "displayName": "subtotal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "vat",
+                "displayName": "vat",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "total",
+                "displayName": "total",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "flags",
+                "displayName": "flags",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "status",
+                "displayName": "status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "id",
+                "displayName": "id",
+                "required": false,
+                "defaultMatch": true,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "decided_at",
+                "displayName": "decided_at",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "decided_by",
+                "displayName": "decided_by",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "note",
+                "displayName": "note",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          224,
+          176
+        ],
+        "id": "5eba9ff8-456a-41db-98aa-77abb1434ca9",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "nWtlGs5taM8YbCf8",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "{ \"ok\": true }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          448,
+          176
+        ],
+        "id": "cd627649-0f67-4726-a19f-d95681549c6b",
+        "name": "Respond to Webhook1"
+      }
+    ],
+    "connections": {
+      "List invoices": {
+        "main": [
+          [
+            {
+              "node": "Get row(s) in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get row(s) in sheet": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Record decision": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1",
+      "binaryMode": "separate"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "nodeGroups": [],
+    "pinData": {},
+    "versionId": "516ce4f4-d086-45db-ae8c-d3d979cf8111",
+    "activeVersionId": "516ce4f4-d086-45db-ae8c-d3d979cf8111",
+    "versionCounter": 33,
+    "triggerCount": 2,
+    "sourceWorkflowId": null,
+    "tags": [],
+    "shared": [
+      {
+        "updatedAt": "2026-10-08T15:26:22.431Z",
+        "createdAt": "2026-10-08T15:26:22.431Z",
+        "role": "workflow:owner",
+        "workflowId": "PnehHrFD7uM4DD5m",
+        "projectId": "FGSoFnjmSFjub7mk",
+        "project": {
+          "updatedAt": "2026-10-07T19:25:09.766Z",
+          "createdAt": "2026-10-07T19:22:05.950Z",
+          "id": "FGSoFnjmSFjub7mk",
+          "name": "Alexandru Varzari <varzaria53@gmail.com>",
+          "type": "personal",
+          "icon": null,
+          "description": null,
+          "customTelemetryTags": [],
+          "creatorId": "d7d3758f-59ac-4d0f-ad5e-e1dcb10652a4"
+        }
+      }
+    ],
+    "versionMetadata": {
+      "name": "v1 – list invoices and record decisions",
+      "description": ""
+    }
+  }
+]

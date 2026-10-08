@@ -1,10 +1,11 @@
 # Invoice Intake Automation (n8n + AI)
 
-A no-code workflow that reads supplier invoices from an email inbox, extracts the details with AI, logs them to Google Sheets, and asks a manager to approve anything unusual, with one click in an email.
+An n8n workflow that reads supplier invoices from an email inbox, extracts the details with AI and logs them to Google Sheets. Anything unusual goes to an approval dashboard, where a manager approves or declines it with one click.
 
 - **160 / 160 fields extracted correctly** across 20 test invoices: 3 layouts, 4 date formats, 3 currencies, and invoices in German
 - **20 / 20 invoices routed correctly**: duplicates, unapproved suppliers and large amounts sent for approval; everything else logged automatically
 - **About 2 seconds per invoice**, versus several minutes of manual typing
+- **Approval dashboard** with a one-row-per-invoice queue, spend overview and an audit trail of who decided what, connected to n8n through token-secured webhooks
 
 <!-- Demo: add the recording as docs/demo.gif and uncomment the next line -->
 <!-- ![Workflow demo](docs/demo.gif) -->
@@ -27,8 +28,10 @@ flowchart LR
     C --> G[Log to<br/>Google Sheet]
     G --> Q{Flagged?}
     Q -- "no" --> Done[Approved<br/>automatically]
-    Q -- "yes" --> M[Approval email<br/>Approve / Decline]
-    M --> U[Status updated<br/>in the sheet]
+    Q -- "yes" --> N[One notification<br/>email per batch]
+    N --> D[Approval dashboard<br/>Approve / Decline]
+    D <-- "secured webhooks" --> API[n8n dashboard API]
+    API <--> G
 ```
 
 | Step | n8n node | What it does |
@@ -39,7 +42,18 @@ flowchart LR
 | 4–5 | Google Sheets | Reads the approved supplier list and the invoices already logged |
 | 6 | Code (a few lines) | Flags **duplicates** (same supplier and invoice number), **new suppliers** (not on the approved list) and **high amounts** (over 10,000) |
 | 7 | Google Sheets | Logs every invoice with its flags and status |
-| 8–12 | If, Loop Over Items, Send Email (send and wait), Google Sheets | Emails the manager about each flagged invoice, waits for Approve / Decline, and records the decision |
+| 8–9 | If, Send Email | Sends one short email per batch listing the invoices waiting for approval, with a link to the dashboard |
+
+**The approval dashboard** (`dashboard.py`, Streamlit) never talks to Google directly. A second n8n workflow, *Invoice dashboard API*, exposes two webhooks protected by a secret header token:
+
+| Webhook | What it does |
+| --- | --- |
+| `GET /webhook/invoices` | Returns every logged invoice from the sheet |
+| `POST /webhook/decision` | Records a decision: status, time, who decided, and an optional note |
+
+The dashboard has three tabs: the **approval queue** (one row per flagged invoice, with the reason, due date, a note box and Approve / Decline), an **overview** (approved spend per currency, invoices due in the next 14 days, spend by supplier), and the **decision history**, which can be downloaded as CSV for audit.
+
+The first version sent one approval email per flagged invoice, with Approve and Decline buttons. The dashboard replaced it so that approvers see everything in one place, can add notes, and have an audit trail.
 
 ## Results
 
@@ -51,6 +65,8 @@ Tested on 20 generated invoices (`generate_invoices.py`) with a known answer key
 | Invoices routed correctly | 18 / 20 | **20 / 20** |
 | Approval decisions recorded | 0 / 5 (bug) | **5 / 5** |
 
+After switching to the dashboard, a third run produced one notification email for the 5 flagged invoices, and all 5 decisions made on the dashboard were written back to the sheet with the approver's name, the time and the note.
+
 **What run 1 taught us**
 
 - **The AI is excellent at numbers and dates.** All 140 amounts, dates, currencies and invoice numbers were correct in both runs, including German invoices and four different date formats.
@@ -60,23 +76,27 @@ Tested on 20 generated invoices (`generate_invoices.py`) with a known answer key
 ## Run it yourself
 
 1. Install [Node.js](https://nodejs.org) and n8n (`npm install -g n8n`), then run `n8n start` and open http://localhost:5678.
-2. Import `workflow/invoice-intake.json` (Workflows, then Import from file).
+2. Import `workflow/invoice-intake.json` and `workflow/dashboard-api.json` (Workflows, then Import from file), and set each workflow's timezone in its settings.
 3. Create the credentials in n8n:
    - **IMAP and SMTP:** a Gmail address with a Google [app password](https://myaccount.google.com/apppasswords) (`imap.gmail.com:993`, `smtp.gmail.com:465`)
    - **Anthropic:** an API key from console.anthropic.com
    - **Google Sheets OAuth2:** a Google Cloud OAuth client (Web application) with redirect URI `http://localhost:5678/rest/oauth2-credential/callback`
-4. Create a Google Sheet with an `Invoices` tab (headers: `received_at, supplier, invoice_number, invoice_date, due_date, currency, subtotal, vat, total, flags, status, id`) and a `Suppliers` tab (import `suppliers.csv`).
-5. To test: copy `invoices/*.pdf` to `~/.n8n-files/invoices/`, run the workflow from the manual trigger, answer the approval emails, export the Invoices tab to `results/sheet_export.csv`, and run `py evaluate.py`.
+   - **Header Auth** for the dashboard webhooks: name `X-Dashboard-Token`, value a long random string
+4. Create a Google Sheet with an `Invoices` tab (headers: `received_at, supplier, invoice_number, invoice_date, due_date, currency, subtotal, vat, total, flags, status, id, decided_at, decided_by, note`) and a `Suppliers` tab (import `suppliers.csv`).
+5. Publish the *Invoice dashboard API* workflow, copy `.env.example` to `.env` with the same token, then run `pip install -r requirements.txt` and `streamlit run dashboard.py`.
+6. To test: copy `invoices/*.pdf` to `~/.n8n-files/invoices/`, run *Invoice Intake* from the manual trigger, make the decisions on the dashboard, export the Invoices tab to `results/sheet_export.csv`, and run `py evaluate.py`.
 
 ## Files
 
 | File | Purpose |
 | --- | --- |
-| `workflow/invoice-intake.json` | The n8n workflow (no credentials included) |
+| `workflow/invoice-intake.json` | The n8n intake workflow (no credentials included) |
+| `workflow/dashboard-api.json` | The n8n workflow behind the dashboard: two secured webhooks |
+| `dashboard.py` | The approval dashboard (Streamlit) |
 | `generate_invoices.py` | Creates the 20 test invoice PDFs, the answer key and the supplier list |
 | `invoices/` | The test invoices |
 | `answer_key.csv` | Correct fields and flags for every test invoice |
 | `evaluate.py` | Scores a sheet export against the answer key |
 | `docs/case-study.md` | One-page case study: problem, solution, results, risks |
 
-**Built with:** n8n, Claude Opus 5.5 (via n8n's Anthropic node), Gmail (IMAP/SMTP), Google Sheets, Python for test data and scoring.
+**Built with:** n8n (workflows and webhooks), Claude Opus 5.5 (via n8n's Anthropic node), Gmail (IMAP/SMTP), Google Sheets, Streamlit for the dashboard, Python for test data and scoring.
