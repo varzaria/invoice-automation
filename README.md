@@ -51,7 +51,7 @@ flowchart LR
 | `GET /webhook/invoices` | Returns every logged invoice from the sheet |
 | `POST /webhook/decision` | Records a decision: status, time, who decided, and an optional note |
 
-The dashboard has three tabs: the **approval queue** (one row per flagged invoice, with the reason, due date, a note box and Approve / Decline), an **overview** (approved spend per currency, invoices due in the next 14 days, spend by supplier), and the **decision history**, which can be downloaded as CSV for audit.
+The dashboard has four tabs: the **approval queue** (one row per flagged invoice, with the reason, due date, a note box, Approve / Decline, and expandable details that check subtotal + VAT = total), **auto-approved** invoices with a daily spot-check sample, an **overview** (approved spend per currency, invoices due in the next 14 days, spend by supplier), and the **decision history**, which can be downloaded as CSV for audit.
 
 The first version sent one approval email per flagged invoice, with Approve and Decline buttons. The dashboard replaced it so that approvers see everything in one place, can add notes, and have an audit trail.
 

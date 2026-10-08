@@ -98,13 +98,39 @@ st.subheader("Invoice Approvals")
 
 # --- Approval queue ---------------------------------------------------------------
 
-tab_queue, tab_overview, tab_history = st.tabs([f"Approval queue ({len(pending)})", "Overview", "Decision history"])
+auto_approved = invoices[invoices["flags"] == "none"].sort_values("received_at", ascending=False)
+
+tab_queue, tab_auto, tab_overview, tab_history = st.tabs([
+    f"Approval queue ({len(pending)})", f"Auto-approved ({len(auto_approved)})", "Overview", "Decision history"])
 
 QUEUE_COLUMNS = [3, 1.3, 1.4, 2, 2.4, 1.3, 1.3]  # supplier, amount, due, flag, note, approve, decline
 
 
 def escape(text: str) -> str:
     return text.replace("$", "\\$")  # so Streamlit doesn't read "$" as a maths formula
+
+
+def irish_time(value) -> str:
+    ts = pd.to_datetime(value, errors="coerce", utc=True)
+    return "" if pd.isna(ts) else ts.tz_convert("Europe/Dublin").strftime("%d %b %Y %H:%M")
+
+
+def show_details(inv) -> None:
+    """What the AI extracted, with an arithmetic check, so the approver can verify it rather than trust it."""
+    cur = inv["currency"]
+    adds_up = abs(inv["subtotal"] + inv["vat"] - inv["total"]) < 0.01
+    vat_rate = f" ({inv['vat'] / inv['subtotal']:.1%})" if inv["subtotal"] else ""
+    d = st.columns(4)
+    d[0].markdown(f"**Invoice date**  \n{inv['invoice_date']:%d %b %Y}")
+    d[1].markdown(f"**Subtotal**  \n{escape(money(inv['subtotal'], cur))}")
+    d[2].markdown(f"**VAT**  \n{escape(money(inv['vat'], cur))}{vat_rate}")
+    d[3].markdown(f"**Total**  \n{escape(money(inv['total'], cur))}")
+    if adds_up:
+        st.caption("✅ Subtotal + VAT = total, so the extracted amounts are consistent.")
+    else:
+        st.caption(f"⚠️ Subtotal + VAT = {escape(money(inv['subtotal'] + inv['vat'], cur))}, which doesn't match the total. "
+                   "Check the original invoice.")
+    st.caption(f"Received {irish_time(inv['received_at'])} · ID {inv['id']}")
 
 
 with tab_queue:
@@ -135,6 +161,26 @@ with tab_queue:
                         st.rerun()
                     except requests.RequestException as e:
                         st.error(f"Could not save the decision: {e}")
+            with st.expander("Details"):
+                show_details(inv)
+
+# --- Auto-approved ------------------------------------------------------------
+
+with tab_auto:
+    st.caption("These invoices passed every check and were logged without anyone looking at them. "
+               "Open a few each week to confirm the AI read them correctly.")
+    if auto_approved.empty:
+        st.write("None yet.")
+    else:
+        # A small, changing sample to spot-check, so it's clear where to start.
+        sample_ids = set(auto_approved.sample(min(3, len(auto_approved)), random_state=date.today().toordinal())["id"])
+        ordered = auto_approved.assign(spot=auto_approved["id"].isin(sample_ids)).sort_values("spot", ascending=False, kind="stable")
+        for _, inv in ordered.iterrows():
+            label = (f"{'🔎 ' if inv['id'] in sample_ids else ''}{inv['supplier']} · {inv['invoice_number']} · "
+                     f"{escape(money(inv['total'], inv['currency']))} · due {inv['due_date']:%d %b}")
+            with st.expander(label):
+                show_details(inv)
+        st.caption("🔎 = today's suggested spot-check sample")
 
 # --- Overview -------------------------------------------------------------------
 
