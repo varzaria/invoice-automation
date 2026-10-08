@@ -1,6 +1,6 @@
 [
   {
-    "updatedAt": "2026-10-08T15:41:11.667Z",
+    "updatedAt": "2026-10-08T16:05:14.160Z",
     "createdAt": "2026-10-07T19:32:20.103Z",
     "id": "h2fX6oldWlyyWXXc",
     "name": "Invoice Intake",
@@ -166,7 +166,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Flags an invoice if it is a duplicate, from an unapproved supplier, or over 10,000.\nconst clean = s => String(s ?? '').toLowerCase().replace(/[^a-z0-9äöüß]/g, '');\n\n// Edit distance: how many letters differ between two names (catches AI typos like \"Kafferösterei\").\nconst distance = (a, b) => {\n  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);\n  for (let j = 1; j <= b.length; j++) d[0][j] = j;\n  for (let i = 1; i <= a.length; i++)\n    for (let j = 1; j <= b.length; j++)\n      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));\n  return d[a.length][b.length];\n};\n\n// Use the approved supplier's exact name if the extracted name is within 2 letters of it.\nconst approvedNames = $('Get approved suppliers').all().map(i => i.json.supplier);\nconst matchSupplier = name => approvedNames.find(a => distance(clean(a), clean(name)) <= 2);\n\nconst seen = new Set(\n  $('Get logged invoices').all()\n    .filter(i => i.json.invoice_number)\n    .map(i => clean(i.json.supplier) + '|' + clean(i.json.invoice_number))\n);\n\nreturn $('Information Extractor').all().map((item, index) => {\n  const inv = item.json.output;\n  const known = matchSupplier(inv.supplier);\n  const supplier = known ?? inv.supplier;\n  const key = clean(supplier) + '|' + clean(inv.invoice_number);\n\n  const flags = [];\n  if (seen.has(key)) flags.push('duplicate');\n  if (!known) flags.push('new_supplier');\n  if (inv.total > 10000) flags.push('high_amount');\n  seen.add(key); // catches duplicates within the same batch too\n\n  return { json: {\n    received_at: $now.toISO(),\n    ...inv,\n    supplier, // the approved name when matched, so the sheet stays consistent\n    flags: flags.join(';') || 'none',\n    status: flags.length ? 'pending approval' : 'approved',\n    id: `${$execution.id}-${index}`,\n  } };\n});"
+          "jsCode": "// Flags an invoice if it is a duplicate, from an unapproved supplier, or over 10,000.\nconst clean = s => String(s ?? '').toLowerCase().replace(/[^a-z0-9äöüß]/g, '');\n\n// Edit distance: how many letters differ between two names (catches AI typos like \"Kafferösterei\").\nconst distance = (a, b) => {\n  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array(b.length).fill(0)]);\n  for (let j = 1; j <= b.length; j++) d[0][j] = j;\n  for (let i = 1; i <= a.length; i++)\n    for (let j = 1; j <= b.length; j++)\n      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));\n  return d[a.length][b.length];\n};\n\n// Use the approved supplier's exact name if the extracted name is within 2 letters of it.\nconst approvedNames = $('Get approved suppliers').all().map(i => i.json.supplier);\nconst matchSupplier = name => approvedNames.find(a => distance(clean(a), clean(name)) <= 2);\n\n// The original PDF's file name, from whichever trigger ran (email or test folder).\nconst sourceFile = index => {\n  for (const node of ['Email Trigger (IMAP)', 'Read test invoices']) {\n    try {\n      const name = $(node).all()[index]?.binary?.attachment_0?.fileName;\n      if (name) return name;\n    } catch (e) { /* that trigger didn't run this time */ }\n  }\n  return '';\n};\n\nconst seen = new Set(\n  $('Get logged invoices').all()\n    .filter(i => i.json.invoice_number)\n    .map(i => clean(i.json.supplier) + '|' + clean(i.json.invoice_number))\n);\n\nreturn $('Information Extractor').all().map((item, index) => {\n  const inv = item.json.output;\n  const known = matchSupplier(inv.supplier);\n  const supplier = known ?? inv.supplier;\n  const key = clean(supplier) + '|' + clean(inv.invoice_number);\n\n  const flags = [];\n  if (seen.has(key)) flags.push('duplicate');\n  if (!known) flags.push('new_supplier');\n  if (inv.total > 10000) flags.push('high_amount');\n  seen.add(key); // catches duplicates within the same batch too\n\n  return { json: {\n    received_at: $now.toISO(),\n    ...inv,\n    supplier, // the approved name when matched, so the sheet stays consistent\n    flags: flags.join(';') || 'none',\n    status: flags.length ? 'pending approval' : 'approved',\n    id: `${$execution.id}-${index}`,\n    source_file: sourceFile(index),\n  } };\n});"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -547,9 +547,9 @@
     },
     "nodeGroups": [],
     "pinData": {},
-    "versionId": "98c306e0-b560-437b-9ecc-37194f10eeb9",
+    "versionId": "1b9d8392-88a7-4757-b383-b48dce291864",
     "activeVersionId": null,
-    "versionCounter": 92,
+    "versionCounter": 93,
     "triggerCount": 0,
     "sourceWorkflowId": null,
     "tags": [],

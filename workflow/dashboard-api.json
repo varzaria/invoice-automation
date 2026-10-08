@@ -1,6 +1,6 @@
 [
   {
-    "updatedAt": "2026-10-08T15:35:49.468Z",
+    "updatedAt": "2026-10-08T15:52:15.404Z",
     "createdAt": "2026-10-08T15:26:22.428Z",
     "id": "PnehHrFD7uM4DD5m",
     "name": "Invoice dashboard API",
@@ -379,7 +379,11 @@
     },
     "settings": {
       "executionOrder": "v1",
-      "binaryMode": "separate"
+      "binaryMode": "separate",
+      "timeSavedMode": "fixed",
+      "timezone": "Europe/Dublin",
+      "callerPolicy": "workflowsFromSameOwner",
+      "availableInMCP": false
     },
     "staticData": null,
     "meta": {
@@ -389,7 +393,7 @@
     "pinData": {},
     "versionId": "516ce4f4-d086-45db-ae8c-d3d979cf8111",
     "activeVersionId": "516ce4f4-d086-45db-ae8c-d3d979cf8111",
-    "versionCounter": 33,
+    "versionCounter": 34,
     "triggerCount": 2,
     "sourceWorkflowId": null,
     "tags": [],
