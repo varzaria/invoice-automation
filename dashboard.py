@@ -180,7 +180,8 @@ with tab_history:
         st.caption("No decisions yet.")
     else:
         history = decided.assign(
-            decided=lambda d: pd.to_datetime(d["decided_at"], errors="coerce").dt.strftime("%d %b %Y %H:%M"),
+            decided=lambda d: pd.to_datetime(d["decided_at"], errors="coerce", utc=True)
+                              .dt.tz_convert("Europe/Dublin").dt.strftime("%d %b %Y %H:%M"),  # show Irish time
             amount=lambda d: [money(t, c) for t, c in zip(d["total"], d["currency"])],
         )[["decided", "status", "decided_by", "supplier", "invoice_number", "amount", "flags", "note"]]
         st.dataframe(history, hide_index=True, use_container_width=True)
