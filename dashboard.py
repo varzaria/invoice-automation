@@ -41,10 +41,10 @@ def load_invoices() -> pd.DataFrame:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     for col in ["invoice_date", "due_date"]:
         df[col] = pd.to_datetime(df[col], errors="coerce")
-    for col in ["decided_at", "decided_by", "note"]:
+    for col in ["decided_at", "decided_by", "note", "source_file"]:
         if col not in df:
             df[col] = ""
-    return df.fillna({"decided_at": "", "decided_by": "", "note": ""})
+    return df.fillna({"decided_at": "", "decided_by": "", "note": "", "source_file": ""})
 
 
 def send_decision(invoice_id: str, decision: str, note: str, decided_by: str) -> None:
@@ -130,7 +130,8 @@ def show_details(inv) -> None:
     else:
         st.caption(f"⚠️ Subtotal + VAT = {escape(money(inv['subtotal'] + inv['vat'], cur))}, which doesn't match the total. "
                    "Check the original invoice.")
-    st.caption(f"Received {irish_time(inv['received_at'])} · ID {inv['id']}")
+    source = str(inv.get("source_file", "") or "")
+    st.caption(f"Received {irish_time(inv['received_at'])}" + (f" · 📄 {source}" if source else "") + f" · ID {inv['id']}")
 
 
 with tab_queue:

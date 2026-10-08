@@ -82,7 +82,7 @@ After switching to the dashboard, a third run produced one notification email fo
    - **Anthropic:** an API key from console.anthropic.com
    - **Google Sheets OAuth2:** a Google Cloud OAuth client (Web application) with redirect URI `http://localhost:5678/rest/oauth2-credential/callback`
    - **Header Auth** for the dashboard webhooks: name `X-Dashboard-Token`, value a long random string
-4. Create a Google Sheet with an `Invoices` tab (headers: `received_at, supplier, invoice_number, invoice_date, due_date, currency, subtotal, vat, total, flags, status, id, decided_at, decided_by, note`) and a `Suppliers` tab (import `suppliers.csv`).
+4. Create a Google Sheet with an `Invoices` tab (headers: `received_at, supplier, invoice_number, invoice_date, due_date, currency, subtotal, vat, total, flags, status, id, decided_at, decided_by, note, source_file`) and a `Suppliers` tab (import `suppliers.csv`).
 5. Publish the *Invoice dashboard API* workflow, copy `.env.example` to `.env` with the same token, then run `pip install -r requirements.txt` and `streamlit run dashboard.py`.
 6. To test: copy `invoices/*.pdf` to `~/.n8n-files/invoices/`, run *Invoice Intake* from the manual trigger, make the decisions on the dashboard, export the Invoices tab to `results/sheet_export.csv`, and run `py evaluate.py`.
 
