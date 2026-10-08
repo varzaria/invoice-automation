@@ -86,7 +86,14 @@ if invoices.empty:
 pending = invoices[invoices["status"] == "pending approval"].sort_values("due_date")
 decided = invoices[invoices["decided_at"].astype(str).str.len() > 0].sort_values("decided_at", ascending=False)
 
-st.markdown("<style>.block-container {padding-top: 2rem;}</style>", unsafe_allow_html=True)
+st.markdown("""<style>
+.block-container {padding-top: 2rem;}
+/* Approve buttons green, Decline buttons red (Streamlit tags each button's container with its key) */
+[class*="st-key-approved-"] button {background-color: #1e9e55; border-color: #1e9e55; color: white;}
+[class*="st-key-approved-"] button:hover {background-color: #178244; border-color: #178244; color: white;}
+[class*="st-key-rejected-"] button {background-color: #d64545; border-color: #d64545; color: white;}
+[class*="st-key-rejected-"] button:hover {background-color: #b53434; border-color: #b53434; color: white;}
+</style>""", unsafe_allow_html=True)
 st.subheader("Invoice Approvals")
 
 # --- Approval queue ---------------------------------------------------------------
