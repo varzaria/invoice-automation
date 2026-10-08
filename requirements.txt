@@ -1,3 +1,6 @@
 reportlab
 pandas
 pypdf
+streamlit
+requests
+python-dotenv
