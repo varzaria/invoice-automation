@@ -86,38 +86,41 @@ if invoices.empty:
 pending = invoices[invoices["status"] == "pending approval"].sort_values("due_date")
 decided = invoices[invoices["decided_at"].astype(str).str.len() > 0].sort_values("decided_at", ascending=False)
 
-st.title("Invoice Approvals")
+st.markdown("<style>.block-container {padding-top: 2rem;}</style>", unsafe_allow_html=True)
+st.subheader("Invoice Approvals")
 
 # --- Approval queue ---------------------------------------------------------------
 
 tab_queue, tab_overview, tab_history = st.tabs([f"Approval queue ({len(pending)})", "Overview", "Decision history"])
 
+QUEUE_COLUMNS = [3, 1.3, 1.4, 2, 2.4, 1.3, 1.3]  # supplier, amount, due, flag, note, approve, decline
+
+
+def escape(text: str) -> str:
+    return text.replace("$", "\\$")  # so Streamlit doesn't read "$" as a maths formula
+
+
 with tab_queue:
     if pending.empty:
         st.success("Nothing waiting for approval.")
+    else:
+        header = st.columns(QUEUE_COLUMNS)
+        for col, label in zip(header, ["Supplier", "Total", "Due", "Why flagged", "Note", "", ""]):
+            col.caption(label)
     for _, inv in pending.iterrows():
         days_left = (inv["due_date"].date() - date.today()).days if pd.notna(inv["due_date"]) else None
+        when = "" if days_left is None else "overdue" if days_left < 0 else "today" if days_left == 0 else f"in {days_left} days"
+        flags = str(inv["flags"]).split(";")
         with st.container(border=True):
-            top_left, top_right = st.columns([3, 1])
-            top_left.subheader(f"{inv['supplier']} · {inv['invoice_number']}")
-            top_right.metric("Total", money(inv["total"], inv["currency"]))
-            for flag in str(inv["flags"]).split(";"):
-                st.warning(f"**{flag.replace('_', ' ').capitalize()}**: {FLAG_REASONS.get(flag, flag)}")
-            c1, c2, c3 = st.columns(3)
-            c1.write(f"**Invoice date:** {inv['invoice_date']:%d %b %Y}")
-            due_text = f"{inv['due_date']:%d %b %Y}"
-            if days_left is not None:
-                when = "overdue" if days_left < 0 else "today" if days_left == 0 else f"in {days_left} days"
-                due_text += f" ({when})"
-            c2.write(f"**Due:** {due_text}")
-            amounts = f"{money(inv['subtotal'], inv['currency'])} / {money(inv['vat'], inv['currency'])}"
-            c3.write(f"**Subtotal / VAT:** {amounts.replace('$', chr(92) + '$')}")  # escape $ so it isn't read as maths
-
-            note = st.text_input("Note (optional)", key=f"note-{inv['id']}", placeholder="e.g. Checked with supplier by phone")
-            b1, b2, _ = st.columns([1, 1, 4])
-            for button, decision, kind in [(b1, "approved", "primary"), (b2, "rejected", "secondary")]:
-                label = "Approve" if decision == "approved" else "Decline"
-                if button.button(label, key=f"{decision}-{inv['id']}", type=kind, use_container_width=True):
+            c = st.columns(QUEUE_COLUMNS, vertical_alignment="center")
+            c[0].markdown(f"**{inv['supplier']}**  \n:gray[{inv['invoice_number']} · {inv['invoice_date']:%d %b %Y}]")
+            c[1].markdown(f"**{escape(money(inv['total'], inv['currency']))}**")
+            c[2].markdown(f"{inv['due_date']:%d %b}  \n:{'red' if days_left is not None and days_left <= 0 else 'gray'}[{when}]")
+            c[3].markdown(" ".join(f":orange-badge[{f.replace('_', ' ')}]" for f in flags),
+                          help="  \n".join(FLAG_REASONS.get(f, f) for f in flags))
+            note = c[4].text_input("Note", key=f"note-{inv['id']}", placeholder="Note (optional)", label_visibility="collapsed")
+            for col, decision, label, kind in [(c[5], "approved", "Approve", "primary"), (c[6], "rejected", "Decline", "secondary")]:
+                if col.button(label, key=f"{decision}-{inv['id']}", type=kind, use_container_width=True):
                     try:
                         send_decision(inv["id"], decision, note, approver)
                         st.toast(f"{inv['supplier']} {inv['invoice_number']}: {decision}")
