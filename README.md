@@ -7,8 +7,9 @@ An n8n workflow that reads supplier invoices from an email inbox, extracts the d
 - **About 2 seconds per invoice**, versus several minutes of manual typing
 - **Approval dashboard** with a one-row-per-invoice queue, spend overview and an audit trail of who decided what, connected to n8n through token-secured webhooks
 
-<!-- Demo: add the recording as docs/demo.gif and uncomment the next line -->
-<!-- ![Workflow demo](docs/demo.gif) -->
+### ▶ Watch the demo (2 minutes)
+
+[![Demo video: a German invoice arrives by email, is read by AI, flagged for approval and approved on the dashboard](https://img.youtube.com/vi/vkSVUQjSIX0/hqdefault.jpg)](https://youtu.be/vkSVUQjSIX0)
 
 ## The business problem
 
