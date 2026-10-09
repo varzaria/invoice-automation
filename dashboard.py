@@ -95,10 +95,30 @@ st.markdown("""<style>
 [class*="st-key-rejected-"] button:hover {background-color: #b53434; border-color: #b53434; color: white;}
 </style>""", unsafe_allow_html=True)
 st.subheader("Invoice Approvals")
-
-# --- Approval queue ---------------------------------------------------------------
+st.caption("Kildare Craft Coffee Ltd · invoices read from email by AI, checked, and logged to Google Sheets")
 
 auto_approved = invoices[invoices["flags"] == "none"].sort_values("received_at", ascending=False)
+
+
+def totals_by_currency(df: pd.DataFrame) -> str:
+    """e.g. '€18,125 · $21,020' (invoices come in several currencies, so they aren't added together)."""
+    if df.empty:
+        return "nothing"
+    sums = df.groupby("currency")["total"].sum().sort_values(ascending=False)
+    return " · ".join(money(total, cur).split(".")[0] for cur, total in sums.items())
+
+
+today = pd.Timestamp(date.today())
+due_soon_all = invoices[(invoices["status"] == "approved") & (invoices["due_date"] >= today)
+                        & (invoices["due_date"] <= today + pd.Timedelta(days=14))]
+s = st.columns(4)
+s[0].metric("Invoices logged", len(invoices))
+s[1].metric("Auto-approved", len(auto_approved), f"{len(auto_approved) / len(invoices):.0%} needed no one", delta_color="off")
+s[2].metric("Waiting for approval", len(pending), totals_by_currency(pending), delta_color="off")
+s[3].metric("Due in the next 14 days", len(due_soon_all), totals_by_currency(due_soon_all), delta_color="off",
+            help="Approved invoices due for payment in the next two weeks")
+
+# --- Approval queue ---------------------------------------------------------------
 
 tab_queue, tab_auto, tab_overview, tab_history = st.tabs([
     f"Approval queue ({len(pending)})", f"Auto-approved ({len(auto_approved)})", "Overview", "Decision history"])
