@@ -78,6 +78,8 @@ After switching to the dashboard, a third run produced one notification email fo
 
 *An initial assessment of what using this in a real business would involve. Not legal advice.*
 
+**Full DPIA:** [docs/dpia.md](docs/dpia.md) is a complete Data Protection Impact Assessment, following the Irish Data Protection Commission's 7-step template. It covers data flows, lawful basis, five risks scored by likelihood and severity, and the measures that bring each one down to low.
+
 | Area | What applies | How the design handles it, and what's still needed |
 | --- | --- | --- |
 | **EU AI Act: risk level** | Likely **minimal risk**: AI reads invoices and rules flag exceptions. It makes no decisions about people. | AI only extracts data; the approval rules are plain code that anyone can read. |
@@ -113,5 +115,6 @@ After switching to the dashboard, a third run produced one notification email fo
 | `answer_key.csv` | Correct fields and flags for every test invoice |
 | `evaluate.py` | Scores a sheet export against the answer key |
 | `docs/case-study.md` | One-page case study: problem, solution, results, risks |
+| `docs/dpia.md` | Data Protection Impact Assessment following the Irish DPC's 7-step template |
 
 **Built with:** n8n (workflows and webhooks), Claude Opus 5.5 (via n8n's Anthropic node), Gmail (IMAP/SMTP), Google Sheets, Streamlit for the dashboard, Python for test data and scoring.
