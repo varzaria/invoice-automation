@@ -73,6 +73,20 @@ After switching to the dashboard, a third run produced one notification email fo
 - **Names in capital letters are its weak spot, and the mistakes are intermittent.** In run 1 it read "KAFFEERÖSTEREI" as "Kafferösterei" on 2 invoices. That one-letter typo made an approved supplier look new and hid a duplicate invoice. In run 2 the AI read the same invoices correctly. The fix is not to hope the AI gets it right; it is a safety net: extracted supplier names are matched to the approved list allowing up to 2 letters' difference, and the official name is recorded. Results are now consistent however the AI reads the name on a given day.
 - **A stray space in a column header** ("id " instead of "id") silently broke the approval update. Small set-up details matter as much as the AI.
 
+## Risk and compliance
+
+*An initial assessment of what using this in a real business would involve. Not legal advice.*
+
+| Area | What applies | How the design handles it, and what's still needed |
+| --- | --- | --- |
+| **EU AI Act: risk level** | Likely **minimal risk**: AI reads invoices and rules flag exceptions. It makes no decisions about people. | AI only extracts data; the approval rules are plain code that anyone can read. |
+| **Automated approval** | Normal invoices are logged as approved without anyone checking them. | Nothing is paid automatically: payment stays a separate weekly step. The **Auto-approved** tab suggests three invoices a day for spot checks, and every invoice shows a subtotal + VAT = total check. |
+| **GDPR** | Invoices and emails can contain personal data (sole traders' names, addresses, bank details). Invoice text goes to the AI provider, and details are stored in Google Sheets. | Sign data processing terms with the AI provider and Google; limit who can open the sheet; keep records only as long as tax rules require, then delete them. |
+| **Invoice fraud** | A common fraud is a fake invoice, or a real supplier's invoice with changed bank details. | Unknown suppliers and duplicates are always sent for approval. **Next step:** extract the bank details too and flag any change from the supplier's known account. |
+| **Access and accountability** | Whoever can approve invoices controls money going out. | The dashboard's webhooks reject requests without the secret token, and every decision records who, when and why. **Limitation:** the token proves the request came from the dashboard, not *who* is using it, and the approver's name is typed in. In production, use individual logins. |
+| **Segregation of duties** | The same person shouldn't both enter and approve an invoice. | Entry is automated and approval is a separate, named step. In production, restrict approvals to named roles. |
+| **Failures** | If n8n, the AI or Google is unavailable, invoices could go unprocessed without anyone noticing. | n8n keeps a record of failed runs. **Next step:** set up an error notification so a failed run emails the owner. |
+
 ## Run it yourself
 
 1. Install [Node.js](https://nodejs.org) and n8n (`npm install -g n8n`), then run `n8n start` and open http://localhost:5678.
